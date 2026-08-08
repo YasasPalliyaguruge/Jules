@@ -7,8 +7,9 @@ import Footer from "../components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Jules Wellness",
-  description: "A visually stunning mental wellness website with a modern, calming aesthetic.",
+  title: "Jules | Private Daily Check-In",
+  description:
+    "A browser-local reflection tool for recording mood, energy, sleep, intentions and private notes.",
 };
 
 export default function RootLayout({
@@ -20,9 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Header />
-        <main className="pt-20">
-          {children}
-        </main>
+        <main>{children}</main>
         <Footer />
       </body>
     </html>

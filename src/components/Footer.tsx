@@ -1,13 +1,11 @@
 export default function Footer() {
   return (
-    <footer className="bg-gray-800 text-white py-8 px-6 text-center">
-      <div className="container mx-auto">
-        <p>&copy; {new Date().getFullYear()} Jules Wellness. All rights reserved.</p>
-        <div className="flex justify-center space-x-4 mt-4">
-          <a href="#" className="hover:underline">Privacy Policy</a>
-          <a href="#" className="hover:underline">Terms of Service</a>
-          <a href="#" className="hover:underline">Contact Us</a>
-        </div>
+    <footer className="border-t border-slate-200 bg-slate-950 px-6 py-10 text-slate-300">
+      <div className="mx-auto flex max-w-7xl flex-col gap-3 text-sm leading-6 md:flex-row md:items-center md:justify-between">
+        <p>&copy; {new Date().getFullYear()} Jules. A browser-local reflection project.</p>
+        <p className="max-w-2xl text-slate-400">
+          Check-ins stay in the current browser unless the user exports or clears them. Jules does not provide medical or crisis services.
+        </p>
       </div>
     </footer>
   );

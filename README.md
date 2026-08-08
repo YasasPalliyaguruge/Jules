@@ -1,25 +1,59 @@
-# Jules Wellness
+# Jules — Private Daily Check-In
 
 ![Jules wellness project cover](assets/recruiter/cover.png)
 
-> **Portfolio lens:** A cohesive front-end exploration of several wellness journeys—designed as a prototype, without pretending to be a clinical platform.
+Jules is a browser-local reflection app built with Next.js, React and TypeScript. It provides one complete workflow for recording mood, energy, sleep, intentions, appreciation and optional notes without requiring an account or backend.
 
-Jules is a Next.js wellness-site prototype. The current build brings together mood tracking, therapist discovery, meditation and journaling, community, crisis support, and a personal dashboard as separate parts of the same experience.
+## Implemented features
 
-## Working on it
+- One check-in per selected date, with safe update behaviour.
+- Mood and energy scales with descriptive labels.
+- Sleep-hour validation.
+- Intention, appreciation and private notes.
+- Seven-entry averages for mood, energy and sleep.
+- Browser `localStorage` persistence.
+- Safe recovery when saved data is malformed or storage is unavailable.
+- Edit and delete individual check-ins.
+- Confirmed full-history clearing.
+- JSON history export.
+- Responsive, keyboard-accessible forms and history cards.
+
+## Privacy and clinical boundary
+
+Check-ins remain in the current browser profile unless the user exports or clears them. Jules does not provide authentication, cloud synchronisation, therapist discovery, diagnosis, treatment, crisis support or medical advice.
+
+It is a personal journaling interface, not a healthcare service.
+
+## Run locally
 
 ```bash
 npm ci
 npm run dev
 ```
 
-Open `http://localhost:3000` once the development server is ready. The project uses Next.js, React, TypeScript, Tailwind CSS, and the App Router.
+Open `http://localhost:3000`.
 
-Before sharing a build, run:
+## Quality checks
 
 ```bash
 npm run lint
+npm run typecheck
 npm run build
 ```
 
-`npm run start` serves an already-built production version. There is no configured backend or authentication service in this repository, so the wellness journeys are currently a front-end prototype rather than a clinical service.
+GitHub Actions runs the same checks on pull requests and pushes to `main`.
+
+## Technology
+
+- Next.js 15 App Router
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Browser local storage
+
+## Current limitations
+
+- Data is limited to one browser profile and device.
+- There is no encryption layer beyond the browser and operating system’s normal storage controls.
+- Exported JSON files are the user’s responsibility to store securely.
+- The seven-entry summary is descriptive only and should not be interpreted as a health assessment.

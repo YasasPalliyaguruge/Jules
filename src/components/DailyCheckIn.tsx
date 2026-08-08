@@ -17,16 +17,25 @@ type CheckIn = {
 type Draft = Omit<CheckIn, 'id' | 'createdAt'>;
 
 const STORAGE_KEY = 'jules-daily-checkins-v1';
-const today = new Date().toISOString().slice(0, 10);
-const initialDraft: Draft = {
-  date: today,
-  mood: 3,
-  energy: 3,
-  sleepHours: 7,
-  intention: '',
-  gratitude: '',
-  note: '',
-};
+
+function getLocalDateValue(date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function createDraft(date: string): Draft {
+  return {
+    date,
+    mood: 3,
+    energy: 3,
+    sleepHours: 7,
+    intention: '',
+    gratitude: '',
+    note: '',
+  };
+}
 
 const moodLabels = ['Very low', 'Low', 'Steady', 'Good', 'Very good'];
 const energyLabels = ['Depleted', 'Low', 'Moderate', 'Energised', 'Very energised'];
@@ -68,13 +77,18 @@ function formatDate(value: string): string {
 }
 
 export default function DailyCheckIn() {
+  const [today, setToday] = useState('');
   const [entries, setEntries] = useState<CheckIn[]>([]);
-  const [draft, setDraft] = useState<Draft>(initialDraft);
+  const [draft, setDraft] = useState<Draft>(() => createDraft(''));
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
 
   useEffect(() => {
+    const localToday = getLocalDateValue();
+    setToday(localToday);
+    setDraft((current) => (current.date ? current : { ...current, date: localToday }));
+
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -114,7 +128,6 @@ export default function DailyCheckIn() {
       { mood: 0, energy: 0, sleep: 0 },
     );
     return {
-      count: recent.length,
       mood: total.mood / recent.length,
       energy: total.energy / recent.length,
       sleep: total.sleep / recent.length,
@@ -128,6 +141,10 @@ export default function DailyCheckIn() {
 
     if (!draft.date) {
       setError('Choose a date for this check-in.');
+      return;
+    }
+    if (today && draft.date > today) {
+      setError('Check-ins cannot be saved for a future date.');
       return;
     }
     if (!Number.isFinite(draft.sleepHours) || draft.sleepHours < 0 || draft.sleepHours > 24) {
@@ -150,7 +167,7 @@ export default function DailyCheckIn() {
         right.date.localeCompare(left.date),
       ),
     );
-    setDraft({ ...initialDraft, date: today });
+    setDraft(createDraft(today || getLocalDateValue()));
     setNotice(existing ? `The ${formatDate(nextEntry.date)} check-in was updated.` : 'Your check-in was saved in this browser.');
   };
 
@@ -180,13 +197,19 @@ export default function DailyCheckIn() {
   };
 
   const exportHistory = () => {
+    const exportDate = today || getLocalDateValue();
     const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `jules-checkins-${today}.json`;
+    link.download = `jules-checkins-${exportDate}.json`;
+    link.style.display = 'none';
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => {
+      link.remove();
+      URL.revokeObjectURL(url);
+    }, 0);
     setNotice('A JSON copy of your local history was exported.');
   };
 
@@ -211,7 +234,7 @@ export default function DailyCheckIn() {
               <input
                 type="date"
                 value={draft.date}
-                max={today}
+                max={today || undefined}
                 onChange={(event) => setDraft((current) => ({ ...current, date: event.target.value }))}
                 className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
               />
